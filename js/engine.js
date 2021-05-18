@@ -29,14 +29,6 @@ class Object{
     this.rotation = 0;
   }
   update(){
-
+	rect(this.position.x,this.position.y,this.size.x,this.size.y);
   }
-}
-
-function setup(){
-
-}
-
-function draw(){
-  
 }
