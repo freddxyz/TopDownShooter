@@ -1,3 +1,5 @@
+var players = [];
+
 function getDelta(){
 	return deltaTime/1000;
 }
@@ -167,6 +169,27 @@ class Bullet extends GameObject {
 		if(this.ticker >= this.timeToLive){
 			ROOT.removeChild(this);
 		}
+	}
+}
+
+class ReplicatedPlayer extends GameObject {
+	constructor(id, username){
+		super();
+		this.id = id;
+		this.username = username;
+		this.size = new Vector2(100,100);
+		this.color = new Color(0,255,0,255);
+		this.formFactor = "ELLIPSE";
+		players.push(this);
+		this.setParent(ROOT);
+	}
+	update(){
+		push()
+		super.update();
+		textSize(30);
+		fill(0,255,255);
+		text(this.username, this.position.x, this.position.y - 50);
+		pop()
 	}
 }
 
