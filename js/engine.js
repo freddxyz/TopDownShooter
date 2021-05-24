@@ -1,5 +1,5 @@
 var players = [];
-
+//bruih
 function getDelta(){
 	return deltaTime/1000;
 }
@@ -172,14 +172,39 @@ class Bullet extends GameObject {
 	}
 }
 
-class ReplicatedPlayer extends GameObject {
-	constructor(id, username){
+class Gun extends GameObject {
+	constructor(fireRate, velocity, kick, bulletLife){
+		super();
+		this.fireRate = fireRate;
+		this.velocity = velocity;
+		this.kick = kick;
+		this.bulletLife = bulletLife;
+	}
+
+}
+
+class PlayerObject extends GameObject {
+	constructor(gun){
+		super(gun);
+		console.log(gun)
+		this.gun = gun;
+		this.helmet = new GameObject();
+		//this.gun.setParent(this);
+		this.helmet.setParent(this);
+	}
+}
+
+class ReplicatedPlayer extends PlayerObject {
+	constructor(gun, id, username){
 		super();
 		this.id = id;
 		this.username = username;
 		this.size = new Vector2(100,100);
 		this.color = new Color(0,255,0,255);
 		this.formFactor = "ELLIPSE";
+
+		this.gun = gun;
+
 		players.push(this);
 		this.setParent(ROOT);
 	}
@@ -193,20 +218,15 @@ class ReplicatedPlayer extends GameObject {
 	}
 }
 
-class Player extends GameObject {
-	constructor(){
-		super();
+class Player extends PlayerObject {
+	constructor(gun){
+		super(gun);
 		this.speed = 10;
 
 		this.fireRate = .1;
 		this.fireTicker = 0;
 		this.canFire = true;
 
-		this.knockBack = .1;		
-		this.bulletSpeed = 2000;
-		this.bulletLife = .5;
-
-		this.muzzle;
 	}
 	update(){
 		super.update();
@@ -244,12 +264,12 @@ class Player extends GameObject {
 		proj.size.x = 40;
 		proj.size.y = 15;
 		proj.rotation = this.rotation;
-		proj.pivot = this.muzzle.position;
+		proj.pivot = this.gun.position;
 		proj.formFactor = "ELLIPSE";
 		proj.color = new Color(255,0,0,255)
 		if(this.muzzle){
-			proj.velocity = new Vector2(cos(proj.rotation), sin(proj.rotation)).multiplyScalar(this.bulletSpeed)//this.muzzle.getGlobalPosition().sub(input.mousePos).normalize().multiplyScalar(-1000);
-			this.addForce(proj.velocity.multiplyScalar(-this.knockBack))
+			proj.velocity = new Vector2(cos(proj.rotation), sin(proj.rotation)).multiplyScalar(this.gun.velocity)//this.muzzle.getGlobalPosition().sub(input.mousePos).normalize().multiplyScalar(-1000);
+			this.addForce(proj.velocity.multiplyScalar(-this.gun.kick))
 		}
 		proj.friction = 0;
 	}

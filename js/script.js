@@ -1,6 +1,7 @@
 var socket = io("https://TopDownShooterServer.frederikdavidso.repl.co");
-
-let plr = new Player();
+let defaultGun = new Gun(.01, 1000, .1, .5);
+let plr = new Player(defaultGun);
+console.log(plr.gun)
 plr.setParent(ROOT);
 let gun = new GameObject();
 let helmet = new GameObject();
@@ -33,7 +34,6 @@ socket.on('move', (data)=>{
 		if(plr.id == data.player.id){
 			plr.position.x = data.position.x;
 			plr.position.y = data.position.y;
-			//console.log('found it');
 			inList = true;
 			return;
 		}
@@ -44,7 +44,6 @@ socket.on('move', (data)=>{
 });
 
 socket.on('leave', (data)=>{
-	console.log('someone left')
 	if(data.player.id == clientId){
 		alert('disconnected, reloading the page')
 		location.reload();
