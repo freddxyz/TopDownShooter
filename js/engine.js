@@ -180,6 +180,9 @@ class Gun extends GameObject {
 		this.kick = kick;
 		this.bulletLife = bulletLife;
 	}
+	clone(){
+		return this.constructor(this.fireRate, this.velocity, this.kick, this.bulletLife);
+	}
 
 }
 
