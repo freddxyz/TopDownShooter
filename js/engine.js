@@ -173,15 +173,19 @@ class Bullet extends GameObject {
 }
 
 class Gun extends GameObject {
-	constructor(fireRate, velocity, kick, bulletLife){
+	constructor(fireRate, bulletSpeed, kick, bulletLife){
 		super();
 		this.fireRate = fireRate;
-		this.velocity = velocity;
+		this.bulletSpeed = bulletSpeed;
 		this.kick = kick;
 		this.bulletLife = bulletLife;
 	}
 	clone(){
-		return this.constructor(this.fireRate, this.velocity, this.kick, this.bulletLife);
+		let newGun = new this.constructor(this.fireRate, this.bulletSpeed, this.kick, this.bulletLife);
+		newGun.position = this.position;
+		newGun.size = this.size;
+		newGun.color = this.color;
+		return newGun;
 	}
 
 }
@@ -192,14 +196,20 @@ class PlayerObject extends GameObject {
 		console.log(gun)
 		this.gun = gun;
 		this.helmet = new GameObject();
-		//this.gun.setParent(this);
+		this.helmet.size = new Vector2(50,50);
+		this.helmet.formFactor = "ELLIPSE";
+		this.gun.setParent(this);
 		this.helmet.setParent(this);
+	}
+	update(){
+		super.update();
+		
 	}
 }
 
 class ReplicatedPlayer extends PlayerObject {
 	constructor(gun, id, username){
-		super();
+		super(gun);
 		this.id = id;
 		this.username = username;
 		this.size = new Vector2(100,100);
@@ -270,8 +280,8 @@ class Player extends PlayerObject {
 		proj.pivot = this.gun.position;
 		proj.formFactor = "ELLIPSE";
 		proj.color = new Color(255,0,0,255)
-		if(this.muzzle){
-			proj.velocity = new Vector2(cos(proj.rotation), sin(proj.rotation)).multiplyScalar(this.gun.velocity)//this.muzzle.getGlobalPosition().sub(input.mousePos).normalize().multiplyScalar(-1000);
+		if(this.gun){
+			proj.velocity = new Vector2(cos(proj.rotation), sin(proj.rotation)).multiplyScalar(this.gun.bulletSpeed)//this.muzzle.getGlobalPosition().sub(input.mousePos).normalize().multiplyScalar(-1000);
 			this.addForce(proj.velocity.multiplyScalar(-this.gun.kick))
 		}
 		proj.friction = 0;

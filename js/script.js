@@ -1,19 +1,18 @@
 var socket = io("https://TopDownShooterServer.frederikdavidso.repl.co");
 let defaultGun = new Gun(.01, 1000, .1, .5);
-let plr = new Player(defaultGun);
-console.log(plr.gun)
-plr.setParent(ROOT);
-let gun = new GameObject();
-let helmet = new GameObject();
-helmet.setParent(plr);
-gun.setParent(plr);
+defaultGun.size = new Vector2(80,20);
+defaultGun.position = new Vector2(50,0);
+defaultGun.color = new Color(100,100,100);
+let player = new Player(defaultGun.clone());
+console.log(player.gun)
+player.setParent(ROOT);
 //let inputManager = new InputManager();
 //inputManager.connect();
 
 var clientId = 0;
 
 window.setInterval(()=>{
-	socket.emit('move', {position: plr.position});
+	socket.emit('move', {position: player.position, rotation: player.rotation});
 }, 33.3334);
 
 socket.on('setupRequest', ()=>{
@@ -23,7 +22,9 @@ socket.on('setupRequest', ()=>{
 
 socket.on('join', (data)=>{
 	if(data.id != clientId){
-		let plr = new ReplicatedPlayer(data.id, data.username);
+		console.log(defaultGun);
+		let plr = new ReplicatedPlayer(defaultGun.clone(), data.id, data.username);
+		console.log(plr.username);
 	}
 });
 
@@ -34,13 +35,14 @@ socket.on('move', (data)=>{
 		if(plr.id == data.player.id){
 			plr.position.x = data.position.x;
 			plr.position.y = data.position.y;
+			plr.rotation = data.rotation;
 			inList = true;
 			return;
 		}
 	});
 	if(inList) return;
 	console.log('made new player', data.player.username);
-	let plr = new ReplicatedPlayer(defaultGun, data.player.id, data.player.username);
+	let plr = new ReplicatedPlayer(defaultGun.clone(), data.player.id, data.player.username);
 });
 
 socket.on('leave', (data)=>{
@@ -79,29 +81,12 @@ function setup(){
 	noStroke();
 	createCanvas(window.innerWidth, window.innerHeight);
 	
-	plr.color = new Color(255,255,0,255);
-	plr.size = new Vector2(100,100);
-	plr.formFactor = "ELLIPSE";
+	player.color = new Color(255,255,0,255);
+	player.size = new Vector2(100,100);
+	player.formFactor = "ELLIPSE";
 
-	plr.friction = 7;
-	plr.speed = 50;
-
-	plr.knockBack = .05;
-	plr.fireRate = .05;
-	plr.bulletLife = .5;
-	plr.bulletSpeed = 2000;
-
-	plr.muzzle = gun;
-
-	gun.size = new Vector2(80,20);
-	gun.position.x = 50;
-	gun.position.y = 0;
-	gun.color = new Color(128,128,128);
-	gun.formFactor = "RECT"
-
-	helmet.size = new Vector2(50,50);
-	helmet.color = new Color(200,200,200);
-	helmet.formFactor = "ELLIPSE";
+	player.friction = 7;
+	player.speed = 50;
 }
 
 function draw() {
