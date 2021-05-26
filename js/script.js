@@ -40,7 +40,7 @@ socket.on('move', (data)=>{
 	});
 	if(inList) return;
 	console.log('made new player', data.player.username);
-	let plr = new ReplicatedPlayer(data.player.id, data.player.username);
+	let plr = new ReplicatedPlayer(defaultGun, data.player.id, data.player.username);
 });
 
 socket.on('leave', (data)=>{
@@ -63,6 +63,8 @@ socket.on('checkup', ()=>{
 });
 
 var username = prompt("Enter a name");
+if(!username) username ='No Name';
+
 
 window.addEventListener("beforeunload", function(){
 	socket.emit('leave');

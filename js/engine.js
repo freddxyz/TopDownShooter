@@ -205,7 +205,7 @@ class ReplicatedPlayer extends PlayerObject {
 		this.size = new Vector2(100,100);
 		this.color = new Color(0,255,0,255);
 		this.formFactor = "ELLIPSE";
-
+		this.position = new Vector2(100,100);
 		this.gun = gun;
 
 		players.push(this);
