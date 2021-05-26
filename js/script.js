@@ -64,6 +64,13 @@ socket.on('checkup', ()=>{
 	socket.emit('checkup');
 });
 
+socket.on('playerKilled', (data)=>{
+	console.log('playerKilled');
+	if(data.player.id == clientId){
+		player.position = new Vector2(0,0);
+	}
+})
+
 var username = prompt("Enter a name");
 if(!username) username ='No Name';
 

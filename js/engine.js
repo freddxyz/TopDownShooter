@@ -27,6 +27,14 @@ class Vector2 {
 	normalize(){
 		return this.divideScalar(this.magnitude || 1);
 	}
+	distanceSquared(v2){
+		//x-x, y-y
+		const dx = this.x - v2.x; const dy = this.y - v2.y;
+		return dx * dx + dy * dy;
+	}
+	distance(v2){
+		return Math.sqrt(this.distanceSquared(v2));
+	}
 }
 
 class Color {
@@ -159,16 +167,31 @@ class GameObject extends BaseObject {
 class Bullet extends GameObject {
 	constructor(timeToLive){
 		super();
+		this.damaged = [];
 		this.timeToLive = timeToLive;
 		this.ticker = 0;
+		this.damage = 0;
 		this.setParent(ROOT);
 	}
 	update(){
 		super.update();
+		this.checkHitPlayer();
 		this.ticker += getDelta();
 		if(this.ticker >= this.timeToLive){
 			ROOT.removeChild(this);
 		}
+	}
+	checkHitPlayer(){
+		players.forEach((plr)=>{
+			if(this.damaged.indexOf(plr) == -1){
+				if(this.position.distance(plr.position) <= plr.size.x/2){
+					this.damaged.push(plr);
+					plr.color = new Color(255,0,0);
+					socket.emit('playerDamage', {id: plr.id, damage: this.damage})
+					console.log('damaged');
+				};
+			}
+		});
 	}
 }
 
@@ -179,6 +202,7 @@ class Gun extends GameObject {
 		this.bulletSpeed = bulletSpeed;
 		this.kick = kick;
 		this.bulletLife = bulletLife;
+		this.damage = 10;
 	}
 	clone(){
 		let newGun = new this.constructor(this.fireRate, this.bulletSpeed, this.kick, this.bulletLife);
@@ -200,6 +224,7 @@ class PlayerObject extends GameObject {
 		this.helmet.formFactor = "ELLIPSE";
 		this.gun.setParent(this);
 		this.helmet.setParent(this);
+		this.health = 100;
 	}
 	update(){
 		super.update();
@@ -281,6 +306,7 @@ class Player extends PlayerObject {
 		proj.formFactor = "ELLIPSE";
 		proj.color = new Color(255,0,0,255)
 		if(this.gun){
+			proj.damage = this.gun.damage;
 			proj.velocity = new Vector2(cos(proj.rotation), sin(proj.rotation)).multiplyScalar(this.gun.bulletSpeed)//this.muzzle.getGlobalPosition().sub(input.mousePos).normalize().multiplyScalar(-1000);
 			this.addForce(proj.velocity.multiplyScalar(-this.gun.kick))
 		}
