@@ -1,5 +1,5 @@
 var players = [];
-//bruih
+//br
 function getDelta(){
 	return deltaTime/1000;
 }

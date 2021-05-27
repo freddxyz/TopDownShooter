@@ -1,5 +1,6 @@
 var socket = io("https://TopDownShooterServer.frederikdavidso.repl.co");
-let defaultGun = new Gun(.01, 1000, .1, .5);
+let defaultGun = new Gun(.01, 2000, .1, .5);
+//fireRate, bulletSpeed, kick, bulletLife
 defaultGun.size = new Vector2(80,20);
 defaultGun.position = new Vector2(50,0);
 defaultGun.color = new Color(100,100,100);
@@ -7,7 +8,7 @@ let player = new Player(defaultGun.clone());
 console.log(player.gun)
 player.setParent(ROOT);
 //let inputManager = new InputManager();
-//inputManager.connect();
+//inputManager.connec
 
 var clientId = 0;
 
@@ -67,7 +68,7 @@ socket.on('checkup', ()=>{
 socket.on('playerKilled', (data)=>{
 	console.log('playerKilled');
 	if(data.player.id == clientId){
-		player.position = new Vector2(0,0);
+		player.position = new Vector2(50,5);
 	}
 })
 
