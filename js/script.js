@@ -1,5 +1,4 @@
-var socket = io("https://TopDownShooterServer.frederikdavidso.repl.co");
-let defaultGun = new Gun(.01, 2000, .1, .5);
+let defaultGun = new Gun(0, 4000, .01, 1);
 //fireRate, bulletSpeed, kick, bulletLife
 defaultGun.size = new Vector2(80,20);
 defaultGun.position = new Vector2(50,0);
@@ -70,6 +69,18 @@ socket.on('playerKilled', (data)=>{
 	if(data.player.id == clientId){
 		player.position = new Vector2(50,5);
 	}
+})
+
+socket.on('projectile',(data)=>{
+	if(data.plrId == clientId) return;
+	let proj = new Bullet(data.lifeTime);
+	proj.formFactor = "ELLIPSE";
+	proj.position = new Vector2(data.position.x, data.position.y);
+	proj.size = new Vector2(20,20);
+	proj.color = new Color(0,255,0);
+	proj.active = false;
+	proj.velocity = new Vector2(data.velocity.x, data.velocity.y);
+	proj.setParent(ROOT);
 })
 
 var username = prompt("Enter a name");

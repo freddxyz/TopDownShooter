@@ -167,6 +167,7 @@ class GameObject extends BaseObject {
 class Bullet extends GameObject {
 	constructor(timeToLive){
 		super();
+		this.active = true;
 		this.damaged = [];
 		this.timeToLive = timeToLive;
 		this.ticker = 0;
@@ -175,7 +176,7 @@ class Bullet extends GameObject {
 	}
 	update(){
 		super.update();
-		this.checkHitPlayer();
+		if(this.active) this.checkHitPlayer();
 		this.ticker += getDelta();
 		if(this.ticker >= this.timeToLive){
 			ROOT.removeChild(this);
@@ -186,7 +187,6 @@ class Bullet extends GameObject {
 			if(this.damaged.indexOf(plr) == -1){
 				if(this.position.distance(plr.position) <= plr.size.x/2){
 					this.damaged.push(plr);
-					plr.color = new Color(255,0,0);
 					socket.emit('playerDamage', {id: plr.id, damage: this.damage})
 					console.log('damaged');
 				};
@@ -269,7 +269,7 @@ class Player extends PlayerObject {
 	update(){
 		super.update();
 		this.fireTicker += getDelta();
-		if(this.fireTicker > this.fireRate) this.canFire = true;
+		if(this.fireTicker > this.gun.fireRate) this.canFire = true;
 		super.update();
 		this.rotation = atan2(mouseY - this.position.y, mouseX - this.position.x)
 		if(input.getKeyDown(87)){
@@ -305,12 +305,15 @@ class Player extends PlayerObject {
 		proj.pivot = this.gun.position;
 		proj.formFactor = "ELLIPSE";
 		proj.color = new Color(255,0,0,255)
+		proj.timeToLive = this.gun.bulletLife;
 		if(this.gun){
 			proj.damage = this.gun.damage;
 			proj.velocity = new Vector2(cos(proj.rotation), sin(proj.rotation)).multiplyScalar(this.gun.bulletSpeed)//this.muzzle.getGlobalPosition().sub(input.mousePos).normalize().multiplyScalar(-1000);
 			this.addForce(proj.velocity.multiplyScalar(-this.gun.kick))
 		}
 		proj.friction = 0;
+		socket.emit('projectile', {velocity: proj.velocity, position: proj.position, lifeTime: proj.timeToLive, plrId: clientId});
+
 	}
 }
 
