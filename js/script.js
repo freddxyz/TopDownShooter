@@ -89,6 +89,7 @@ function connectToServer(url){
 }
 
 function setup(){
+	connectToServer('https://topdownshooterserver.frederikdavidso.repl.co/%27')
 	textAlign(CENTER);
 	rectMode(CENTER);
 	noStroke();
