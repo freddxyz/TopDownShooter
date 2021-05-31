@@ -187,8 +187,7 @@ class Bullet extends GameObject {
 			if(this.damaged.indexOf(plr) == -1){
 				if(this.position.distance(plr.position) <= plr.size.x/2){
 					this.damaged.push(plr);
-					socket.emit('playerDamage', {id: plr.id, damage: this.damage})
-					console.log('damaged');
+					if(connected) socket.emit('playerDamage', {id: plr.id, damage: this.damage});
 				};
 			}
 		});
@@ -217,7 +216,6 @@ class Gun extends GameObject {
 class PlayerObject extends GameObject {
 	constructor(gun){
 		super(gun);
-		console.log(gun)
 		this.gun = gun;
 		this.helmet = new GameObject();
 		this.helmet.size = new Vector2(50,50);
@@ -296,7 +294,7 @@ class Player extends PlayerObject {
 		}else{
 			return;
 		}
-		let proj = new Bullet(.5);
+		let proj = new Bullet(1);
 		proj.position = this.position;
 		
 		proj.size.x = 40;
@@ -312,7 +310,7 @@ class Player extends PlayerObject {
 			this.addForce(proj.velocity.multiplyScalar(-this.gun.kick))
 		}
 		proj.friction = 0;
-		socket.emit('projectile', {velocity: proj.velocity, position: proj.position, lifeTime: proj.timeToLive, plrId: clientId});
+		if(connected) socket.emit('projectile', {velocity: proj.velocity, position: proj.position, lifeTime: proj.timeToLive, plrId: clientId});
 
 	}
 }
