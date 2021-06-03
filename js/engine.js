@@ -47,6 +47,18 @@ class Color {
 	setColor(){
 		fill(this.r,this.g,this.b,this.a)
 	}
+	lerp(goal, alpha){
+		//a.r + (b.r - a.r) * t,
+		let col = this.clone()
+		col.r = this.r + (goal.r - this.r) * alpha;
+		col.g = this.g + (goal.g - this.g) * alpha;
+		col.b = this.b + (goal.b - this.b) * alpha;
+		col.a = this.a + (goal.a - this.a) * alpha;
+		return col;
+	}
+	clone(){
+		return new Color(this.r,this.g,this.b,this.a);
+	}
 }
 
 class InputManager {
@@ -95,10 +107,8 @@ class InputManager {
 var input = new InputManager();
 input.connect();
 
-class BaseObject {
+class TreeObject {
 	constructor(){
-		this.position = new Vector2(0,0);
-		this.rotation = 0;
 		this.pivot = new Vector2(0,0)
 		this.children = [];
 		this.parent;
@@ -117,8 +127,13 @@ class BaseObject {
 			this.children.push(child);
 		}
 	}
-	getGlobalPosition(){
-		return this.position.add(this.parent.position);
+}
+
+class BaseObject extends TreeObject{
+	constructor(){
+		super();
+		this.position = new Vector2(0,0);
+		this.rotation = 0;
 	}
 }
 

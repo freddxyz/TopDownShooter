@@ -8,6 +8,10 @@ player.setParent(ROOT);
 //let inputManager = new InputManager();
 //inputManager.connec
 
+let testUi = new TextButton("UI Test");
+testUi.position = new UDIM(.5,0,0.5,0);
+testUi.size = new UDIM(.25,0,.25,0);
+
 function connectToServer(url){
 	var username = prompt("Enter a name");
 	if(!username) username ='No Name';
@@ -105,8 +109,9 @@ function setup(){
 
 function draw() {
 	//plr.velocity = new Vector2(.5,0)
-	background(0);
+	background(255);
 	drawObjects();
+	testUi.update();
 	//plr.addForce(new Vector2(1,1))
 }
 
